@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#080d17">
+  <meta name="description" content="一颗由世界各地的心情组成的星球。每颗星星，都是一张匿名的小纸条。">
+  <title>Emotion Earth 2.0 · 心情小纸条</title>
+  <link rel="stylesheet" href="emotion-earth.css">
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script defer src="data/emotion-data.js"></script>
+  <script defer src="emotion-earth.js"></script>
+</head>
+<body>
+  <div class="sky" aria-hidden="true"></div>
+  <main class="app" id="app">
+    <div class="earth" id="earth" role="img" aria-label="可拖动旋转、滚轮缩放的全球情绪地球"></div>
+    <div class="loading" id="loading" aria-live="polite"><span class="loading-star">✦</span><span>星星正在醒来</span></div>
+
+    <header class="topbar">
+      <a class="wordmark" href="#home" aria-label="Emotion Earth 2.0 首页"><span class="wordmark-icon">✦</span><span>EMOTION <b>EARTH 2.0</b></span></a>
+      <p class="topline">每一颗星星，都有自己的故事。</p>
+      <button class="icon-button sync-open" id="openSync" type="button" aria-label="同步设置" title="同步设置">↗</button>
+    </header>
+
+    <section class="intro glass" id="intro">
+      <p class="eyebrow">A PLANET MADE OF FEELINGS</p>
+      <h1>此刻，世界<br>正在感受什么？</h1>
+      <p class="intro-copy">拖动地球，靠近一座城市。<br>你会发现，远方也有人和你一样。</p>
+      <span class="demo-note">星图为演示数据，呈现方式不代表真实地区结论。</span>
+    </section>
+
+    <section class="legend glass" aria-label="情绪颜色图例">
+      <p class="eyebrow">EMOTIONS</p>
+      <div class="legend-grid" id="legend"></div>
+    </section>
+
+    <section class="composer glass" id="composer" aria-labelledby="composeTitle">
+      <div class="compose-heading"><div><p class="eyebrow">A NOTE TO THE WORLD</p><h2 id="composeTitle">留一张小纸条</h2></div><span class="city-stamp" id="currentCity">定位中…</span></div>
+      <div class="mood-picker" id="moodPicker" role="group" aria-label="选择当下的情绪"></div>
+      <label class="sr-only" for="message">写下现在的感受</label>
+      <textarea id="message" maxlength="240" placeholder="这一刻，你心里有什么？"></textarea>
+      <div class="compose-actions"><label class="publish-toggle"><input id="publish" type="checkbox"><span class="switch"></span><span>匿名同步到星球</span></label><button class="submit" id="submitNote" type="button">点亮一颗星 <span>✦</span></button></div>
+      <p class="privacy-note" id="privacyNote">纸条默认只保存在这台设备。选择同步后，需要连接你自己的 GitHub 仓库。</p>
+    </section>
+
+    <section class="region glass" id="regionPanel" aria-live="polite" hidden>
+      <div class="region-top"><div><p class="eyebrow">A CITY, A THOUSAND FEELINGS</p><h2 id="regionName">Shanghai</h2><p class="region-count" id="regionCount"></p></div><button class="back-button" id="backGlobal" type="button">← 全球</button></div>
+      <p class="region-disclaimer">合成演示数据 · 只用于展示视觉效果</p>
+      <div class="emotion-bar" id="emotionBar" role="img" aria-label="地区情绪比例"></div>
+      <div class="emotion-summary" id="emotionSummary"></div>
+      <div class="bubble-list" id="bubbleList"></div>
+    </section>
+
+    <div class="city-tooltip" id="cityTooltip" role="status" aria-live="polite"></div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <footer class="footer"><span id="worldCount">正在点亮星球…</span><span class="footer-divider">·</span><span>拖动旋转 <i></i> 滚轮缩放</span><button class="sync-button" id="syncNow" type="button">同步星球</button></footer>
+    <a class="texture-credit" href="https://www.solarsystemscope.com/textures/" target="_blank" rel="noopener noreferrer" title="Earth map texture by Solar System Scope, CC BY 4.0">地球纹理：Solar System Scope · CC BY 4.0</a>
+  </main>
+
+  <dialog class="sync-dialog" id="syncDialog">
+    <form method="dialog" id="syncForm" class="sync-form">
+      <button class="dialog-close" value="cancel" aria-label="关闭">×</button>
+      <p class="eyebrow">OPTIONAL · GITHUB SYNC</p><h2>连接共享星球</h2>
+      <p class="dialog-copy">设置你有写入权限的仓库后，可同步自己勾选公开的纸条。令牌只保存在本机浏览器，请勿分享给他人。</p>
+      <label>仓库（用户名/仓库名）<input id="repo" autocomplete="off" placeholder="your-name/emotion-earth"></label>
+      <div class="field-row"><label>分支<input id="branch" value="main"></label><label>数据文件<input id="filePath" value="data/shared-emotions.json"></label></div>
+      <label>GitHub Personal Access Token<input id="token" type="password" autocomplete="new-password" placeholder="github_pat_…"></label>
+      <p class="token-hint">令牌需对该仓库有 Contents 读写权限。同步后，公开记录会进入 Git 历史。</p>
+      <div class="dialog-actions"><button class="quiet-button" value="cancel">稍后再说</button><button class="submit" id="saveSync" value="default">保存连接</button></div>
+    </form>
+  </dialog>
+
+  <script>
+    // CDN 或 WebGL 无法加载时仍显示清晰说明，不让页面静默空白。
+    window.addEventListener('DOMContentLoaded', () => {
+      if (!window.THREE || !window.EMOTION_CONFIG) {
+        document.getElementById('loading').innerHTML = '<span class="loading-star">✦</span><span>星球暂时无法展开，请检查网络后刷新。</span>';
+        document.getElementById('loading').classList.add('loading-error');
+      }
+    });
+  </script>
+</body>
+</html>
