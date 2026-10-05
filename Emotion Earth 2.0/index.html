@@ -5,10 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#080d17">
   <meta name="description" content="一颗由世界各地的心情组成的星球。每颗星星，都是一张匿名的小纸条。">
-  <title>Emotion Earth 2.0 · 心情小纸条</title>
+  <title>Emotion Earth 3.0 · 城市情绪云</title>
   <link rel="stylesheet" href="emotion-earth.css">
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script defer src="data/emotion-data.js"></script>
+  <script defer src="data/city-data.js"></script>
+  <script defer src="emotion-cloud.js"></script>
   <script defer src="emotion-earth.js"></script>
 </head>
 <body>
@@ -18,7 +20,7 @@
     <div class="loading" id="loading" aria-live="polite"><span class="loading-star">✦</span><span>星星正在醒来</span></div>
 
     <header class="topbar">
-      <a class="wordmark" href="#home" aria-label="Emotion Earth 2.0 首页"><span class="wordmark-icon">✦</span><span>EMOTION <b>EARTH 2.0</b></span></a>
+      <a class="wordmark" href="#home" aria-label="Emotion Earth 2.0 首页"><span class="wordmark-icon">✦</span><span>EMOTION <b>EARTH 3.0</b></span></a>
       <p class="topline">每一颗星星，都有自己的故事。</p>
       <button class="icon-button sync-open" id="openSync" type="button" aria-label="同步设置" title="同步设置">↗</button>
     </header>
@@ -27,7 +29,7 @@
       <p class="eyebrow">A PLANET MADE OF FEELINGS</p>
       <h1>此刻，世界<br>正在感受什么？</h1>
       <p class="intro-copy">拖动地球，靠近一座城市。<br>你会发现，远方也有人和你一样。</p>
-      <span class="demo-note">星图为演示数据，呈现方式不代表真实地区结论。</span>
+      <span class="demo-note">城市情绪仅展示已接入的真实数据，没有数据的城市不会被模拟。</span>
     </section>
 
     <section class="legend glass" aria-label="情绪颜色图例">
@@ -82,3 +84,5 @@
   </script>
 </body>
 </html>
+
+

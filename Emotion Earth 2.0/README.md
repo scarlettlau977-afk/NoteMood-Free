@@ -21,3 +21,10 @@
 地球上的初始星点和纸条都是合成演示数据，不代表真实地区心理状况。用户新写的纸条默认只保存在当前浏览器；勾选公开并连接有 Contents 读写权限的 GitHub 仓库后才会同步。IP 定位由第三方服务按访问 IP 粗略估算，可定位失败时继续使用上海示例位置。
 
 地球表面贴图来自 [Solar System Scope](https://www.solarsystemscope.com/textures/)，按 [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) 授权，可商用；已在页面保留署名。
+
+## Emotion Earth 3.0 更新
+- 城市基础数据独立放在 `data/city-data.js`，包含需求文档列出的中国主要城市。
+- `emotion-cloud.js` 只根据真实情绪记录生成城市粒子云；没有真实数据时显示“暂无情绪数据”，不会生成演示用户数据。
+- 缩放层级：远距离只显示地球；中距离显示城市点位和名称；近距离显示已接入城市的 Emotion Cloud。
+- 双击地球恢复默认视角，并限制垂直拖动范围，避免地球翻转。
+- 保留直接双击 `index.html` 运行的方式；未来可将 AI 情绪分析结果写入真实记录后接入城市情绪云。
